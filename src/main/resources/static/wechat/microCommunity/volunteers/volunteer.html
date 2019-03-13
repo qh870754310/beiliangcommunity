@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>志愿者</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="../menu.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">志愿者</span></div>
+    </header>
+    <section class="g-scrollview" id="J_List">
+        <div id="J_ListContent" class="m-list list-theme4">
+        </div>
+    </section>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<script src="../../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <div class="content">
+        <table border="1" style="width:100%;border-collapse:collapse;border:1px solid #eeeeee;">
+            <tbody style="display:table-row-group;vertical-align: middle;border-color: inherit;">
+                <tr style="display: table-row;vertical-align: inherit;border-color: inherit;">
+                    <td rowspan="6" style="width: 110px;" style="padding: 5px 10px;border: 1px solid #eeeeee;display: table-cell;vertical-align: inherit;">
+                        <img style="vertical-align: top;height: 160px;width: 105px;box-shadow: 0 0 5px grey;" class="img" src="{{data.CoverSImg}}">
+                    </td>
+                    <td class="title" style="font-size: 14px;color: black;padding: 5px 10px;border: 1px solid #eeeeee;">
+                        <a style="text-decoration: none;" id="{{data.Code}}" href="javascript:void(0);" onclick="return initItem('{{data.Code}}')">{{data.Title}}</a>
+                    </td>
+                    <td rowspan="6" style="width: 65px; text-align: center;padding: 5px 5px;border: 1px solid #eeeeee;">
+                        {{ if validateDate(dateFormat(getToday(), 'yyyy-MM-dd hh:mm'), data.edTime) }}
+                            <a href="javascript:void(0);" class="state after" style="text-decoration: none;padding: 5px 3px;color: #ffffff;border-radius: 2px;background-color: #EE2C2C;box-shadow: 0 0 5px #EE2C2C">已经过期</a>
+                        {{else}}
+                            <a href="javascript:void(0);" onclick="return signUp('{{data.Code}}')" class="state after" style="text-decoration: none;padding: 5px 3px;color: #ffffff;border-radius: 2px;background-color: #43CD80;box-shadow: 0 0 5px #43CD80;">立即报名</a>
+                        {{/if}}
+                    </td>
+                </tr>
+                <tr style="display: table-row;vertical-align: inherit;border-color: inherit;">
+                    <td style="padding: 5px 10px;border: 1px solid #eeeeee;">
+                        <div class="introduction" style="width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                            {{data.Content}}
+                        </div>
+                    </td>
+                </tr>
+                <tr style="display: table-row;vertical-align: inherit;border-color: inherit;">
+                    <td style="padding: 5px 10px;border: 1px solid #eeeeee;">活动类型：{{data.AType}}</td>
+                </tr>
+                <tr style="display: table-row;vertical-align: inherit;border-color: inherit;">
+                    <td style="padding: 5px 10px;border: 1px solid #eeeeee;">已报名人数：
+                        <a href="javascript:void(0);" class="num" style="text-decoration: none;" onclick="showPersons()">{{data.ct}}</a>
+                    </td>
+                </tr>
+                <tr style="display: table-row;vertical-align: inherit;border-color: inherit;">
+                    <td style="padding: 5px 10px;border: 1px solid #eeeeee;">
+                        开始时间：{{data.stTime}}
+                    </td>
+                </tr>
+                <tr style="display: table-row;vertical-align: inherit;border-color: inherit;">
+                    <td style="padding: 5px 10px;border: 1px solid #eeeeee;">
+                        结束时间：{{data.edTime}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    template.helper('dateFormat', function (date, format) {
+        if (typeof date === "string") {
+            var mts = date.match(/(\/Date(\d+)\/)/);
+            if (mts && mts.length >= 3) {
+                date = parseInt(mts[2]);
+            }
+        }
+        date = new Date(date);
+        if (!date || date.toUTCString() == "Invalid Date") {
+            return "";
+        }
+        var map = {
+            "M": date.getMonth() + 1, //月份
+            "d": date.getDate(), //日
+            "h": date.getHours(), //小时
+            "m": date.getMinutes(), //分
+            "s": date.getSeconds(), //秒
+            "q": Math.floor((date.getMonth() + 3) / 3), //季度
+            "S": date.getMilliseconds() //毫秒
+        };
+
+
+        format = format.replace(/([yMdhmsqS])+/g, function(all, t){
+            var v = map[t];
+            if(v !== undefined){
+                if(all.length > 1){
+                    v = '0' + v;
+                    v = v.substr(v.length-2);
+                }
+                return v;
+            }
+            else if(t === 'y'){
+                return (date.getFullYear() + '').substr(4 - all.length);
+            }
+            return all;
+        });
+        return format;
+    });
+    function CompareDate(d1,d2) {
+        return ((new Date(d1.replace(/-/g,"\/"))) > (new Date(d2.replace(/-/g,"\/"))));
+    }
+    template.helper('validateDate', function (today, date) {
+        CompareDate(today, date);
+
+    });
+    template.helper('getToday', function () {
+        var currentDate = new Date();
+        return currentDate;
+    });
+</script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('activities_list');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function () {
+        loadProperties();
+        // 根据需求自定义获取数据方法
+        var page = 1;
+        var size = 10;
+        /*var loadMore = function (callback) {
+            $.ajax({
+                url: url,
+                data: {'page': page, 'size': size},
+                dataType: 'json',
+                success: function (ret) {
+                    if (ret.IsResult) {
+                        if (ret.Data != null && ret.Data.length > 0) {
+                            // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                            $('#J_ListContent').prepend(template('J_ListHtml', {list: ret.Data}));
+                            /!*$('.introduction').html($('.introduction').text());*!/
+                            var text = $('.introduction').text().replace(/<[^>]+>/g,"");
+                            if (text.trim().length > 15) {
+                                text = text.substring(0,15);
+                            }
+                            $('.introduction').text(text);
+                            var tipStr = ret.length > 0 ? '为您更新了' + ret.length + '条内容' : '已是最新内容';
+                            ++page;
+                            YDUI.dialog.toast(tipStr, 'none', 1500);
+                        }
+                    }
+                },
+                complete: function () {
+                    typeof callback == 'function' && callback();
+                }
+            });
+        };
+        //使用jQuery的deferred对象实现异步通信。
+        $('#J_ListContent').pullRefresh({
+            loadListFn: function () {
+                var def = $.Deferred();
+
+                loadMore(function () {
+                    def.resolve();
+                });
+
+                return def.promise();
+            }
+        });*/
+
+        var loadMore = function (callback) {
+            $.ajax({
+                url: url,
+                data: {'page': page, 'size': size},
+                dataType: 'json',
+                success: function (ret) {
+                    typeof callback == 'function' && callback(ret);
+                }
+            });
+        };
+
+        $('#J_List').infiniteScroll({
+            binder: '#J_List',
+            pageSize: size,
+            initLoad: true,
+            loadingHtml: '<img src="http://static.ydcss.com/uploads/ydui/loading/loading10.svg"/>',
+            loadListFn: function () {
+                var def = $.Deferred();
+                loadMore(function (listArr) {
+                    if (listArr.IsResult) {
+                        console.log(listArr.Data);
+                        if (listArr.Data != null && listArr.Data.length > 0) {
+                            // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                            var html = template('J_ListHtml', {list: listArr.Data});
+                            $('#J_ListContent').append(html).find('img').lazyLoad({binder: '#J_ListContent'});
+
+                            var text = $('.introduction').text().replace(/<[^>]+>/g,"");
+                            if (text.trim().length > 15) {
+                                text = text.substring(0,15);
+                            }
+                            $('.introduction').text(text);
+
+                            var tipStr = listArr.Data.length > 0 ? '为您更新了' + listArr.Data.length + '条内容' : '已是最新内容';
+                            YDUI.dialog.toast(tipStr, 'none', 1500);
+                            def.resolve(listArr.Data);
+                            ++page;
+                        }
+                    }
+                });
+
+                return def.promise();
+            }
+        });
+
+
+    }();
+</script>
+<script type="text/javascript">
+    function initItem(e) {
+        window.event? window.event.cancelBubble = true : e.stopPropagation();
+        if($("a[id='"+e+"']").length > 0) {
+            $("a[id='"+e+"']").on('click', function () {
+                localStorage.setItem('volunteerCode', e);
+                window.location.href = 'info.html';
+            });
+        }
+    }
+
+    function signUp(e) {
+        window.event? window.event.cancelBubble = true : e.stopPropagation();
+        localStorage.setItem('volunteerCode', e);
+        window.location.href = 'info.html';
+    }
+</script>
+</body>
+</html>

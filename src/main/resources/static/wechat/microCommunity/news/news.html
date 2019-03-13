@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>社区新闻</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="../menu.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title"></span></div>
+    </header>
+    <section class="g-scrollview" id="J_List">
+        <div id="J_ListContent" class="m-list list-theme4"></div>
+    </section>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/template.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <a href="javascript:void(0);" class="list-item" id='{{data.id}}' onclick="return initItem()">
+        <div class="list-img">
+            <img src="{{data.CoverSImg}}">
+        </div>
+        <div class="list-mes">
+            <h3 class="list-title">{{data.topic}}</h3>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price">{{data.publishTime}}</span>
+                </div>
+            </div>
+        </div>
+    </a>
+    {{/each}}
+</script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+ //   var apiDomain = 'http://58.211.255.58:7937/';
+
+    var apiDomain =  'http://1.180.57.250:3301/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('news_list');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function () {
+        loadProperties();
+        // 根据需求自定义获取数据方法
+        var page = 1;
+        var size = 10;
+        var type = localStorage.getItem('news_type');
+        if (type == 'notices') {
+            $('.navbar-title').text('通知公告');
+        } else if (type == 'commnews') {
+            $('.navbar-title').text('社区新闻');
+        } else if (type == 'activity') {
+            $('.navbar-title').text('社区活动');
+        } else if (type == 'three_public_affairs') {
+            $('.navbar-title').text('三务公开');
+        }
+        /*var loadMore = function (callback) {
+            $.ajax({
+                url: url,
+                data:{'page': page, 'size': size, 'type': type},
+                dataType: 'json',
+                success: function (ret) {
+                    if (ret.IsResult) {
+                        console.log(ret.Data);
+                        if (ret.Data != null && ret.Data.length > 0) {
+                            // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                            $('#J_ListContent').prepend(template('J_ListHtml', {list: ret.Data}));
+                            var tipStr = ret.length > 0 ? '为您更新了' + ret.length + '条内容' : '已是最新内容';
+                            ++page;
+                            YDUI.dialog.toast(tipStr, 'none', 1500);
+                        }
+                    }
+                },
+                complete: function () {
+                    typeof callback == 'function' && callback();
+                }
+            });
+        };
+        //使用jQuery的deferred对象实现异步通信。
+        $('#J_ListContent').pullRefresh({
+            loadListFn: function () {
+                var def = $.Deferred();
+                loadMore(function () {
+                    def.resolve();
+                });
+                return def.promise();
+            }
+        });*/
+
+
+        var loadMore = function (callback) {
+            $.ajax({
+                url: url,
+                data:{'page': page, 'size': size, 'type': type},
+                dataType: 'json',
+                success: function (ret) {
+                    typeof callback == 'function' && callback(ret);
+                }
+            });
+        };
+
+        $('#J_List').infiniteScroll({
+            binder: '#J_List',
+            pageSize: size,
+            initLoad: true,
+            loadingHtml: '<img src="http://static.ydcss.com/uploads/ydui/loading/loading10.svg"/>',
+            loadListFn: function () {
+                var def = $.Deferred();
+                loadMore(function (listArr) {
+                    console.log(listArr);
+                    if (listArr.IsResult) {
+                        console.log(listArr.Data);
+                        if (listArr.Data != null && listArr.Data.length > 0) {
+                            // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                            var html = template('J_ListHtml', {list: listArr.Data});
+                            $('#J_ListContent').append(html).find('img').lazyLoad({binder: '#J_List'});
+                            var tipStr = listArr.Data.length > 0 ? '为您更新了' + listArr.Data.length + '条内容' : '已是最新内容';
+                            YDUI.dialog.toast(tipStr, 'none', 1500);
+                            def.resolve(listArr.Data);
+                            ++page;
+                        }
+                    }
+                });
+
+                return def.promise();
+            }
+        });
+
+
+    }();
+</script>
+<script>
+    function initItem() {
+        if($("a[class='list-item']").length > 0) {
+            $("a[class='list-item']").on('click', function () {
+                if ($(this).parent().attr('id') == 'J_ListContent') {
+                    localStorage.setItem('id', $(this).attr("id"));
+                    window.location.href = 'info.html';
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在线预约</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="info.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">在线预约</span></div>
+    </header>
+    <div class="g-scrollview">
+        <form id="bookinfo">
+        <div class="m-cell demo-small-pitch">
+            <div class="cell-item">
+                <div class="cell-left">办理业务：</div>
+                <div class="cell-right">
+                    <input type="text" class="cell-input" id="type" value="转入组织关系" readonly="readonly" />
+                </div>
+            </div>
+        </div>
+        <div class="m-cell">
+            <label class="cell-item">
+                <span class="cell-left">办理条件是否清楚：</span>
+                <label class="cell-right">
+                    <!--<input type="checkbox" value="1" name="TheRequire"/>
+                    <i class="cell-checkbox-icon"></i>-->
+                    <input type="checkbox" class="m-switch-old" id="TheRequire" name="TheRequire" value="1"/>
+                    <span class="m-switch"></span>
+                </label>
+            </label>
+        </div>
+        <div class="m-cell">
+            <label class="cell-item">
+                <span class="cell-left">所需材料是否齐全：</span>
+                <label class="cell-right">
+                    <!--<input type="checkbox" value="1" name="TheMaterial"/>
+                    <i class="cell-checkbox-icon"></i>-->
+                    <input type="checkbox" class="m-switch-old" id="TheMaterial" name="TheMaterial" value="1"/>
+                    <span class="m-switch"></span>
+                </label>
+            </label>
+        </div>
+        <div class="m-cell">
+            <label class="cell-item">
+                <span class="cell-left">办理流程是否清楚：</span>
+                <label class="cell-right">
+                    <!--<input type="checkbox" value="1" name="TheProgess"/>
+                    <i class="cell-checkbox-icon"></i>-->
+                    <input type="checkbox" class="m-switch-old" id="TheProgess" name="TheProgess" value="1"/>
+                    <span class="m-switch"></span>
+                </label>
+            </label>
+        </div>
+        <div class="m-celltitle">我的联系方式</div>
+        <div class="m-cell demo-small-pitch">
+            <div class="cell-item">
+                <div class="cell-left">姓名<span style="color: red;">*</span>：</div>
+                <div class="cell-right">
+                    <input type="text" class="cell-input" id="BookName" name="BookName" placeholder="（如：张女士/李先生）" autocomplete="off" required/>
+                </div>
+            </div>
+            <div class="cell-item">
+                <div class="cell-left">联系方式<span style="color: red;">*</span>：</div>
+                <div class="cell-right">
+                    <input type="text" class="cell-input" id="BookPhone" name="BookPhone" placeholder="（手机号或固定电话等）" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        </form>
+        <div class="m-button">
+            <a href="javascript:void(0);" class="btn-block btn-primary" id="submit">提交</a>
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+               /* apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('online_booking');
+            }
+        });
+    }
+
+    function getQueryString(name){
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        loadProperties();
+    }(window, jQuery);
+</script>
+<script>
+    //为jquery.serializeArray()解决radio,checkbox未选中时没有序列化的问题
+    $.fn.ghostsf_serialize = function () {
+        var a = this.serializeArray();
+        var $radio = $('input[type=radio],input[type=checkbox]', this);
+        var temp = {};
+        $.each($radio, function () {
+            if (!temp.hasOwnProperty(this.name)) {
+                if ($("input[name='" + this.name + "']:checked").length == 0) {
+                    temp[this.name] = "";
+                    a.push({name: this.name, value: ""});
+                }
+            }
+        });
+        return jQuery.param(a);
+    };
+</script>
+<script>
+    /* 普通确认框 */
+    $('#submit').on('click', function (e) {
+        var pairs = $('form').ghostsf_serialize().split(/&/gi);
+        console.log(pairs);
+        var data = {};
+        pairs.forEach(function (pair) {
+            pair = pair.split('=');
+            data[pair[0]] = decodeURIComponent(pair[1] || '');
+        });
+        if (!data.BookName) {
+            YDUI.dialog.toast('请输入姓名！', 'error', 2000, function () {});
+            return;
+        }
+        if (!data.BookPhone) {
+            YDUI.dialog.toast('请输入联系方式！', 'error', 2000, function () {});
+            return;
+        }
+        var TheRequire, TheMaterial, TheProgess;
+        if (jQuery.isEmptyObject(data.TheRequire)) {
+            TheRequire = 0;
+        } else {
+            TheRequire = 1;
+        }
+        if (jQuery.isEmptyObject(data.TheMaterial)) {
+            TheMaterial = 0;
+        } else {
+            TheMaterial = 1;
+        }
+        if (jQuery.isEmptyObject(data.TheProgess)) {
+            TheProgess = 0;
+        } else {
+            TheProgess = 1;
+        }
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            data: {'LoginUserCode': localStorage.getItem("LoginUserCode"), 'GuideCode': localStorage.getItem('GOVID'), 'TheRequire': TheRequire, 'TheMaterial':TheMaterial, 'TheProgess': TheProgess, 'BookName':data.BookName, 'BookPhone': data.BookPhone},
+            async: false,
+            success: function (data) {
+                if (data.IsResult) {
+                    YDUI.dialog.notify('恭喜您，' + data.Msg, 2000, function(){
+                        //跳转到基本信息页面
+                        window.location = '/wechat/microService/partyService/info.html';
+                    });
+                } else {
+                    YDUI.dialog.notify('很抱歉，提交失败!'+ data.Msg, 2000, function(){});
+                }
+            }
+        });
+    });
+</script>
+<Script language="javascript">
+    function GetRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for(var i = 0; i < strs.length; i ++) {
+                theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1]);
+            }
+        }
+        return theRequest;
+    }
+    var Request = new Object();
+    Request = GetRequest();
+</Script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>魅力新北梁</title>
+    <script th:inline="javascript">
+        /*var bindState = [[${bindState}]];
+        localStorage.setItem('openId', [[${openId}]]);*/
+        localStorage.setItem('apiDomain', [[${apiDomain}]]);
+        console.log([[${apiDomain}]]);
+        if (!jQuery.isEmptyObject(localStorage.getItem("loginInfo"))) {
+            location = '/wechat/microCommunity/index.html';
+        } else {
+            location = '/wechat/microCommunication/login/login.html';
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

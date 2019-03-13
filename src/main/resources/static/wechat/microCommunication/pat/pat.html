@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>事件上报</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <link rel="stylesheet" href="../../../resources/plugins/baguetteBox/dist/baguetteBox.css" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/0.3.0/weui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/weui-master/dist/style/weui.min.css" />
+    <link rel="stylesheet" href="../../../resources/css/imgUp.css" />
+    <!-- 引入jQuery 2.0+ -->
+    <script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+    <script src="../../../resources/js/jweixin-1.2.0.js"></script>
+    <script src="../../../resources/js/imgUp.js"></script>
+    <script src="../../../resources/plugins/baguetteBox/dist/baguetteBox.js"></script>
+    <script src="../../../resources/plugins/baguetteBox/js/highlight.min.js"></script>
+    <!-- 引入百度地图js -->
+    <script src="http://api.map.baidu.com/api?v=2.0&amp;ak=37E22FC0492960369369a484f57421e8"></script>
+    <style type="text/css">
+        .gallery:after {
+            content: '';
+            display: block;
+            height: 2px;
+            margin: .5em 0 1.4em;
+            background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0%, rgba(77,77,77,1) 50%, rgba(0, 0, 0, 0) 100%);
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(77,77,77,1) 50%, rgba(0, 0, 0, 0) 100%);
+        }
+        .gallery img {
+            height: 100%;
+        }
+        .gallery a {
+            width: 100px;
+            height: 100px;
+            display: inline-block;
+            overflow: hidden;
+            margin: 4px 12px;
+            box-shadow: 0 0 2px -1px #000;
+        }
+        /*.ribbon > img {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: 0;
+        }
+        @media (max-width: 768px) {
+            .sm-hidden {
+                display: none;
+            }
+        }*/
+        .clearfix:after { content:"."; display:block; height:0; clear:both; visibility:hidden}
+        .clearfix { *height:1%;}
+        .user { color: #369; }
+        .comment-box { padding: 10px 0; border-top: 1px solid #eee;}
+        .comment-box:hover { background: rgb(247, 247, 247);}
+        .comment-box .myhead { float: left; width: 30px; height: 30px; margin-right: 10px;}
+        .comment-box .comment-content { width: 400px; }
+        .text-box .comment { border: 1px solid #eee; display: block; height: 50px; width: 100%; padding: 5px; resize: none; color: #ccc}
+        .text-box .btn { font-size: 12px; font-weight: bold; display: none; float: right; width: 65px; height: 25px; border: 1px solid #0C528D; color: #fff; background: #4679AC;}
+        .text-box .word{ display: none; float: right; margin: 7px 10px 0 0; color: #666;}
+        .text-box-on .comment{ height: 50px; color: #333;}
+        .text-box-on .btn{ display: inline;}
+        .text-box-on .word{ display: inline;}
+    </style>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="../../microCommunity/menu.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">事件上报</span></div>
+    </header>
+    <div class="g-scrollview">
+        <div id="J_Tab" class="m-tab">
+            <ul class="tab-nav">
+                <li class="tab-nav-item tab-active"><a href="javascript:;">我要反映</a></li>
+                <li class="tab-nav-item"><a href="javascript:;">历史信息</a></li>
+            </ul>
+            <div class="tab-panel">
+                <div class="tab-panel-item tab-active">
+                    <input type="hidden" id="userCode" name="userCode"/>
+                    <div class="m-cell demo-small-pitch">
+                        <div class="cell-item">
+                            <div class="cell-left">上报人：</div>
+                            <div class="cell-right"><input type="text" class="cell-input" id="userName" name="userName" placeholder="" autocomplete="off" required="required" /></div>
+                        </div>
+                        <div class="cell-item">
+                            <div class="cell-left">联系方式：</div>
+                            <div class="cell-right"><input type="text" class="cell-input" id="cellPhone" name="cellPhone" placeholder="" autocomplete="off" required="required"/></div>
+                        </div>
+                        <div class="cell-item">
+                            <div class="cell-left">事件地址：</div>
+                            <div class="cell-right"><input type="text" class="cell-input" id="address" name="address" placeholder="" autocomplete="off" required="required" /><i class="icon-location"></i></div>
+                        </div>
+                        <div id="baidu_geo"></div>
+                        <div id="google_geo"></div>
+                    </div>
+                    <div class="m-cell demo-small-pitch">
+                        <div class="m-celltitle">情况说明：</div>
+                        <div class="m-cell">
+                            <div class="cell-item">
+                                <div class="cell-right">
+                                    <textarea class="cell-textarea" id="description" name="description" placeholder="请描述问题发生的地点、情况，并至少添加一张问题图片"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-cell demo-small-pitch">
+                        <div class="weui-cells weui-cells_form">
+                            <div class="m-celltitle">图片上传：</div>
+                            <div class="m-cell" id="handleImg">
+                                <div id="imgSelect">
+                                    <img src="../../../resources/img/bg.png" width="77" height="77" id="chooseImage"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div>
+                        <img src="../../../resources/img/bg.png" class="imgPreview" id="_chooseImage" width="77" height="77"  />
+                    </div>-->
+                    <div class="m-cell demo-small-pitch">
+                        <div class="m-cell">
+                        <div class="demo-pitch">
+                            <div class="m-button">
+                                <a href="javascript:;" class="btn-block btn-primary"  onclick="report()">上报</a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-panel-item" id="J_List">
+                    <article class="m-list list-theme5" id="J_ListContent"></article>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入Template脚本 -->
+<script src="../../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<script src="../../../resources/plugins/weui-master/dist/example/zepto.min.js"></script>
+<script src="../../../resources/plugins/weui.js-master/dist/weui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <a href="javascript:void(0);" class="list-item" onclick="return initPadId('{{data.id}}')">
+        <div class="list-mes">
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">{{data.userName}}</span>
+                </div>
+                <div>{{data.reportTime}}</div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">{{data.address}}</span>
+                </div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">{{data.description}}</span>
+                </div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">
+                        {{if data.state == 0}}
+                            未处理
+                        {{else if data.state == 1}}
+                            已处理
+                        {{else if data.state == 2}}
+                            已指派
+                        {{else if data.state == 3}}
+                            已结案
+                        {{else if data.state == 4}}
+                            处理中
+                        {{else if data.state == 5}}
+                            已退回
+                        {{/if}}
+                    </span>
+                </div>
+                <div>{{data.responseTime}}</div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">回复信息：</span>
+                </div>
+                <div>{{data.responseMsg}}</div>
+            </div>
+        </div>
+    </a>
+    <div class="baguetteBoxFour gallery">
+        {{if data.image != null}}
+        <a href="../../../resources/plugins/baguetteBox/img/big/2-1.png" data-at-450="../../../resources/plugins/baguetteBox/img/big/2-1.png">
+            <img src="../../../resources/plugins/baguetteBox/img/thumbs/2-1.png" alt="">
+        </a>
+        <a href="../../../resources/plugins/baguetteBox/img/big/2-2.png">
+            <img src="../../../resources/plugins/baguetteBox/img/thumbs/2-2.png" alt="">
+        </a>
+        <a href="../../../resources/plugins/baguetteBox/img/big/2-3.png">
+            <img src="../../../resources/plugins/baguetteBox/img/thumbs/2-3.png" alt="">
+        </a>
+        {{/if}}
+    </div>
+    <div class="previewImage">
+        <a href="../../../resources/plugins/baguetteBox/img/big/2-3.png">
+            <img src="../../../resources/plugins/baguetteBox/img/thumbs/2-3.png" alt="">
+        </a>
+    </div>
+    {{if data.CommentDesc != null && data.CommentDesc != '' }}
+        <div class="comment-list">
+            <div class="comment-box clearfix" user="self">
+                <img class="myhead" src="../../../resources/img/my.jpg" alt=""/>
+                <div class="comment-content">
+                    <p class="comment-text"><span class="user">我：</span>{{data.CommentDesc}}</p>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+    <div class="text-box">
+        <textarea class="comment" autocomplete="off" id="{{data.id}}">评论…</textarea>
+    </div>
+    <div class="demo-pitch" style="margin-top: 0.2rem;">
+        <button style="display: block; text-align: center;margin-left:80%;height: 0.5rem;line-height: 0.5rem" class="btn btn-primary" onclick="CommentReport('{{data.id}}' )">评论</button>
+    </div>
+    {{/each}}
+</script>
+<script>
+    var $tab = $('#J_Tab');
+    $tab.tab({
+        nav: '.tab-nav-item',
+        panel: '.tab-panel-item',
+        activeClass: 'tab-active'
+    });
+    $tab.find('.tab-nav-item').on('open.ydui.tab', function (e) {
+        console.log('索引：%s - [%s]正在打开', e.index, $(this).text());
+    });
+    $tab.find('.tab-nav-item').on('opened.ydui.tab', function (e) {
+        console.log('索引：%s - [%s]已经打开了', e.index, $(this).text());
+    });
+</script>
+<!--[if lt IE 9]>
+<script>
+    var oldIE = true;
+</script>
+<![endif]-->
+<script>
+    window.onload = function() {
+        /*baguetteBox.run('.baguetteBoxOne');*/
+        baguetteBox.run('.baguetteBoxFour', {
+            buttons: false
+        });
+        if (typeof oldIE === 'undefined' && Object.keys) {
+            hljs.initHighlighting();
+        }
+    };
+</script>
+<script>
+    function CommentReport (id) {
+        var commentDesc = $('#'+id).val();
+        if (jQuery.isEmptyObject(commentDesc)) {
+            YDUI.dialog.toast('评价不能为空', 'error', function(){
+                /* 关闭后调用 */
+            });
+        } else {
+            $.ajax({
+                url: commentUrl,
+                type: "POST",
+                dataType: 'json',
+                data:{'id': id, 'CommentDesc': commentDesc},
+                success: function (data) {
+                    if (data.state == 0) {
+                        window.YDUI.dialog.notify('恭喜您，评价成功！', 2000, function(){});
+                    } else if (data.state == 1) {
+                        window.YDUI.dialog.notify('很抱歉，评价失败！', 2000, function(){});
+                    }
+                }
+            });
+        }
+    }
+
+    function initPadId(e) {
+        window.event? window.event.cancelBubble = true : e.stopPropagation();
+        localStorage.setItem('padId', e);
+        window.location.href = 'handleFlow.html';
+    }
+</script>
+<script>
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    var historyUrl;
+    var commentUrl;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('report');
+                historyUrl = apiDomain +jQuery.i18n.prop('getHistory');
+                commentUrl = apiDomain + jQuery.i18n.prop('commentReport');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    //h5 使用地理定位
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else{
+            YDUI.dialog.toast('浏览器不支持地理定位', 'none', 1500);
+        }
+    }
+    function showPosition(position) {
+        var lat = position.coords.latitude; //纬度
+        var lag = position.coords.longitude; //经度
+        var latlon = lag + "," + lag;
+        //google
+        var img_url="http://maps.googleapis.com/maps/api/staticmap?center="
+            +latlon+"&zoom=14&size=400x300&sensor=false";
+        //baidu
+        var url = '<a href="http://api.map.baidu.com/geocoder/v2/?ak=C93b5178d7a8ebdb830b9b557abce78b&callback=renderReverse&location=" + "'+ latlon+'" + "&output=json&pois=0">http://api.map.baidu.com/geocoder/v2/?ak=C93b5178d7a8ebdb830b9b557abce78b&callback=renderReverse&location="+ "'+ latlon +'"+"&output=json&pois=0</a>';
+        $.ajax({
+            type: "GET",
+            dataType: "jsonp",
+            url: url,
+            beforeSend: function(){
+                $("#baidu_geo").html('正在定位...');
+            },
+            success: function (json) {
+                if(json.status==0){
+                    $("#baidu_geo").html(json.result.formatted_address);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $("#baidu_geo").html(latlon+"地址位置获取失败");
+            }
+        });
+    }
+
+    function showError(error){
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                YDUI.dialog.toast('定位失败,用户拒绝请求地理定位', 'none', 1500);
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("定位失败,位置信息是不可用");
+                break;
+            case error.TIMEOUT:
+                alert("定位失败,请求获取用户位置超时");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("定位失败,定位系统失效");
+                break;
+        }
+    }
+
+    /**
+     * 获取AccessToken
+     *
+     * @returns {string}
+     */
+    function getAccessToken() {
+        var currentUrl = encodeURIComponent(location.href.split('#')[0]);
+        $.ajax({
+            url: '/config',
+            type: "GET",
+            dataType: 'json',
+            data: {'url': currentUrl},
+            success: function (ret) {
+                var resMap = ret.resMap;
+                // 通过config接口注入权限验证配置
+                wx.config({
+                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: resMap.appId, // 必填，公众号的唯一标识
+                    timestamp: resMap.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: resMap.nonceStr, // 必填，生成签名的随机串
+                    signature: resMap.signature,// 必填，签名，见附录1
+                    jsApiList: ['checkJsApi', 'chooseImage', 'previewImage', 'uploadImage', 'getLocation', 'openLocation'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                });
+            }
+        });
+    }
+
+
+    !function () {
+        loadProperties();
+        getAccessToken();
+
+        var loginInfo = JSON.parse(localStorage.getItem("loginInfo"));
+        $('#userName').val(loginInfo.UserName);
+        $('#userCode').val(loginInfo.Code);
+        var page = 1, rows = 10;
+        /*
+        var loadMore = function (callback) {
+            $.ajax({
+                url: historyUrl,
+                dataType: 'json',
+                data:{'page': page, 'rows': rows, 'userCode': loginInfo.Code},
+                success: function (ret) {
+                    console.log(ret);
+                    if (ret != null && ret.Data.length > 0) {
+                        // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                        $('#J_ListContent').prepend(template('J_ListHtml', {list: ret}));
+                        ++page;
+                    }
+                },
+                complete: function () {
+                    typeof callback == 'function' && callback();
+                }
+            });
+        };
+        //使用jQuery的deferred对象实现异步通信。
+        $('#J_ListContent').pullRefresh({
+            loadListFn: function () {
+                var def = $.Deferred();
+                loadMore(function () {
+                    def.resolve();
+                });
+                return def.promise();
+            }
+        });
+        */
+        var loadMore = function (callback) {
+            $.ajax({
+                url: historyUrl,
+                data:{'page': page, 'rows': rows, 'userCode': loginInfo.Code},
+                dataType: 'json',
+                success: function (ret) {
+                    typeof callback == 'function' && callback(ret);
+                }
+            });
+        };
+
+        $('#J_List').infiniteScroll({
+            binder: '#J_List',
+            pageSize: size,
+            initLoad: true,
+            loadingHtml: '<img src="http://static.ydcss.com/uploads/ydui/loading/loading10.svg"/>',
+            loadListFn: function () {
+                var def = $.Deferred();
+                loadMore(function (listArr) {
+                    console.log(listArr);
+                    if (listArr.IsResult) {
+                        console.log(listArr.Data);
+                        if (listArr.Data != null && listArr.Data.length > 0) {
+                            // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                            var html = template('J_ListHtml', {list: listArr.Data});
+                            $('#J_ListContent').append(html).find('img').lazyLoad({binder: '#J_ListContent'});
+                            def.resolve(listArr.Data);
+                            ++page;
+                        }
+                    }
+                });
+
+                return def.promise();
+            }
+        });
+
+        getLocation();
+    }();
+    
+    function report() {
+        var $userName = $('#userName');
+        var $cellPhone = $('#cellPhone');
+        var $address = $('#address');
+        var $description = $('#description');
+        if (!$userName.val()) {
+            window.YDUI.dialog.toast('上报人不能为空！', 'error', 2000, function () {});
+            return;
+        }
+        if (!$cellPhone.val()) {
+            window.YDUI.dialog.toast('请输入联系方式！', 'error', 2000, function () {});
+            return;
+        }
+        if (!$address.val()) {
+            window.YDUI.dialog.toast('事件地址不能为空！', 'error', 2000, function () {});
+            return;
+        }
+        if (!$description.val()) {
+            window.YDUI.dialog.toast('情况说明不能为空！', 'error', 2000, function () {});
+            return;
+        }
+        var formData = new FormData(); //实例化一个formData对象
+        $('#handleImg').find('input[type=file]').each(function () {
+            console.log($(this)[0].files[0]);
+            formData.append("files", $(this)[0].files[0]);
+        });
+        formData.append("userCode", $('#userCode').val());
+        formData.append("userName", $userName.val());
+        formData.append("cellPhone", $cellPhone.val());
+        formData.append("address", $address.val());
+        formData.append("description", $description.val());
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            currentType: false,
+            processData: false,
+            data:formData,
+            success: function (result) {
+                if (result.state == 0) {
+                    window.YDUI.dialog.notify('恭喜您，上报成功！', 2000, function(){});
+                } else if (result.state == 1) {
+                    window.YDUI.dialog.notify('很抱歉，上报失败！', 2000, function(){});
+                }
+            }
+        });
+    }
+</script>
+<script>
+    //通过ready接口处理成功验证
+    wx.ready(function () {
+        // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，
+        // 所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，
+        // 则可以直接调用，不需要放在ready函数中。
+
+        //地理位置需要在页面加载时就调用，需要把相关接口放在ready函数中调用来确保正确执行
+        //通过checkJsApi判断当前客户端版本是否支持指定获取地理位置
+        wx.checkJsApi({
+            jsApiList: [
+                'getLocation'
+            ],
+            success: function (res) {
+                // alert(JSON.stringify(res));
+                // alert(JSON.stringify(res.checkResult.getLocation));
+                if (res.checkResult.getLocation == false) {
+                    alert('你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！');
+                    return;
+                }
+            }
+        });
+
+        //使用getLocation接口获取地理位置坐标
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function (res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                var errMsg = res.errMsg; //结果状态
+            },
+            cancel: function (res) {
+                alert('用户拒绝授权获取地理位置');
+            }
+        });
+
+        //拍照、本地选图
+        var images = {
+            localId: [],
+            serverId: []
+        };
+
+
+        $('#chooseImage').on('click', function () {
+            //##拍照或从手机相册中选图接口
+            wx.chooseImage({
+                count: 9, // 默认9
+                sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (res) {
+                    var localIds = res.localIds;
+                    images.localId = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                    alert('已选择 ' + res.localIds.length + ' 张图片');
+                    syncUpload(localIds);
+
+                }
+            });
+        });
+
+        var syncUpload = function (localIds) {
+            var localId = localIds.pop();
+            images.serverId = [];
+            console.log(localId);
+            //##上传图片接口
+            wx.uploadImage({
+                localId: localId, // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 1, // 默认为1，显示进度提示
+                success: function (res) {
+                    var serverId = res.serverId; // 返回图片的服务器端ID
+                    images.serverId.push(serverId);
+                    console.log(serverId);
+
+                },
+                fail: function (res) {
+                    alert(JSON.stringify(res));
+                }
+            });
+        };
+
+       $('.previewImage img').on('click', function (event) {
+           var previewUrl = [];
+           var $curImageSrc = $(this).attr('src');
+           var oParent = $(this).parent();
+           if ($curImageSrc && !oParent.attr('href')) {
+               $('.previewImage img').each(function (index, el) {
+                   var itemSrc = $(this).attr('src');
+                   previewUrl.push(itemSrc);
+               });
+               //##预览图片接口
+               wx.previewImage({
+                   current: $curImageSrc, // 当前显示图片的http链接
+                   urls: previewUrl // 需要预览的图片http链接列表
+               });
+           }
+        });
+    });
+
+</script>
+</body>
+</html>

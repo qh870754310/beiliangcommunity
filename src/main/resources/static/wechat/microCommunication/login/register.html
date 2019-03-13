@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="login.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">注册</span></div>
+    </header>
+    <div class="g-scrollview">
+        <form>
+            <div class="m-cell demo-small-pitch">
+                <div class="cell-item">
+                    <div class="cell-left">账号：</div>
+                    <div class="cell-right"><input type="text" class="cell-input" name="userName" id="userName" placeholder="请输入账号" autocomplete="off" /></div>
+                </div>
+            </div>
+            <div class="m-cell demo-small-pitch">
+                <div class="cell-item">
+                    <div class="cell-left">密码：</div>
+                    <div class="cell-right"><input type="text" class="cell-input" name="password" id="password" placeholder="请输入密码" autocomplete="off" /></div>
+                </div>
+            </div>
+            <div class="m-cell demo-small-pitch">
+                <div class="cell-item">
+                    <div class="cell-left">身份证号：</div>
+                    <div class="cell-right"><input type="text" class="cell-input" name="cardNo" id="cardNo" placeholder="请输入身份证号" autocomplete="off" /></div>
+                </div>
+            </div>
+        </form>
+        <div class="m-button" style="margin-top: 60px">
+            <button type="submit" class="btn-block btn-primary" id="register">注册</button>
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script>
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        var dialog = win.YDUI.dialog;
+
+        /*var apiDomain = localStorage.getItem('apiDomain');*/
+        var apiDomain = 'http://192.168.1.135:8080';
+        /* 身份证有效性验证（非系统数据中身份证人员无法注册） */
+        $('#register').on('click', function (e) {
+            var pairs = $('form').serialize().split(/&/gi);
+            console.log(pairs);
+            var data = {};
+            pairs.forEach(function (pair) {
+               pair = pair.split('=');
+               data[pair[0]] = decodeURIComponent(pair[1] || '');
+            });
+            if (!data.userName) {
+                dialog.toast('请输入用户名！', 'error', 2000, function () {});
+                return;
+            }
+            if (!data.password) {
+                dialog.toast('请输入密码！', 'error', 2000, function () {});
+                return;
+            }
+            if (!data.cardNo && /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(data.cardNo)) {
+                dialog.toast('请输入正确的身份证号！', 'error', 2000, function () {});
+                return;
+            }
+            if (Validate(dialog)) {
+                $.ajax({
+                    url: apiDomain + "/api/Home/ResidentRegister",
+                    type: "GET",
+                    dataType: "json",
+                    data: {"cardNo": $('#cardNo').val(), "userName": $('#userName').val(), "password": $('#password').val()},
+                    async: false,
+                    jsonp: 'callback',
+                    success: function (data) {
+                        if(data.IsResult) { //true
+                            dialog.notify('恭喜您，' + data.Msg, 3000, function(){
+                                //跳转到基本信息页面
+                                window.location = '/wechat/microCommunication/login/personal.html';
+                            });
+                        } else {
+                            dialog.notify('很抱歉，' + data.Msg, 3000, function(){});
+                        }
+                    }
+                });
+            }
+        });
+    }(window, jQuery);
+
+    /* 数据验证 */
+    function Validate(dialog) {
+        var userName = $('#userName').val();
+        var password = $('#password').val();
+        var cardNo = $('#cardNo').val();
+        if (!userName.trim()) {
+            dialog.toast('请输入用户名！', 'error', 2000, function () {});
+            return false;
+        }
+        if (!password.trim()) {
+            dialog.toast('请输入密码！', 'error', 2000, function () {});
+            return false;
+        }
+        if (!cardNo.trim()) {
+            dialog.toast('请输入身份证号！', 'error', 2000, function () {});
+            return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

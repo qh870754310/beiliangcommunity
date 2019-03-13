@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <!--<a href="#" class="navbar-item"><i class="back-ico"></i></a>-->
+        <div class="navbar-center"><span class="navbar-title">登录</span></div>
+    </header>
+    <div class="g-scrollview">
+        <form>
+            <div class="m-cell demo-small-pitch">
+                <div class="cell-item">
+                    <div class="cell-left">用户名：</div>
+                    <div class="cell-right"><input type="text" class="cell-input" id="userName" name="userName" placeholder="请输入用户名" autocomplete="off" /></div>
+                </div>
+            </div>
+            <div class="m-cell demo-small-pitch">
+                <div class="cell-item">
+                    <div class="cell-left">密码：</div>
+                    <div class="cell-right"><input type="text" class="cell-input" id="password" name="password" placeholder="请输入密码" autocomplete="off" /></div>
+                </div>
+            </div>
+        </form>
+        <div class="m-button">
+            <a href="javascript:;" class="btn-block btn-primary" id="Sign-in">登录</a>
+            <a href="register.html" class="btn-block btn-danger">注册</a>
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('user_login');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        var dialog = win.YDUI.dialog;
+        loadProperties();
+        /* 普通确认框 */
+        $('#Sign-in').on('click', function () {
+            var pairs = $('form').serialize().split(/&/gi);
+            console.log(pairs);
+            var data = {};
+            pairs.forEach(function (pair) {
+                pair = pair.split('=');
+                data[pair[0]] = decodeURIComponent(pair[1] || '');
+            });
+            if (!data.userName) {
+                dialog.toast('请输入用户名！', 'error', 2000, function () {});
+                return;
+            }
+            if (!data.password) {
+                dialog.toast('请输入密码！', 'error', 2000, function () {});
+                return;
+            }
+
+            if (Validate(dialog)) {
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    data: {"userName": $('#userName').val() , "password": $('#password').val()},
+                    async: true,
+                    jsonp: 'callback',
+                    success: function (data) {
+                        if (data.IsResult) {
+                            var personInfo = data.Data;
+                            console.log(personInfo);
+                            dialog.notify('恭喜您，登录成功！', 2000, function(){
+                                //跳转到基本信息页面
+                                localStorage.setItem("LoginUserCode",data.Data.Code);
+                                localStorage.setItem("UserName",data.Data.UserName);
+                                localStorage.setItem("loginInfo",JSON.stringify(personInfo));
+                                window.location.href = 'personal.html';
+                            });
+                        } else {
+                            dialog.notify('很抱歉，' + data.Msg, 2000, function(){
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }(window, jQuery);
+
+    /* 数据验证 */
+    function Validate(dialog) {
+        var userName = $('#userName').val();
+        var password = $('#password').val();
+        if (!userName.trim()) {
+            dialog.toast('请输入用户名！', 'error', 2000, function () {});
+            return false;
+        }
+        if (!password.trim()) {
+            dialog.toast('请输入密码！', 'error', 2000, function () {});
+            return false;
+        }
+        return true;
+    }
+</script>
+</body>
+</html>

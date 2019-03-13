@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>党员服务</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="party_service.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">党员服务</span></div>
+    </header>
+    <div class="g-scrollview" id="J_ListContent">
+        <div class="m-list list-theme4" id="">
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入template脚本 -->
+<script src="../../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <div class="list-item" style="margin-top: 20px">
+        <div class="list-mes">
+            <h2 style="text-align: center; font-size: 16px">{{data.GovTitle}}</h2>
+            <div class="list-mes-item" style="margin-top: 5px">
+                <div data-id="AddTime" style="width: 100%; margin: 0 auto; text-align: center;padding: 5px" id="AddTime">
+                    {{data.AddTime}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="m-cell">
+        <div class="cell-item">
+            <div class="cell-left">办事对象</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;">{{data.GovObject}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">办事条件</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;" id="GovRequire">{{data.GovRequire}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">所需材料</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;" id="GovMaterial">{{data.GovMaterial}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">办理流程</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;" id="GovProcess">{{data.GovProcess}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">办理时限</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;">{{data.GovTimeRegion}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">常见问题</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;" id="GovQuestion">{{data.GovQuestion}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">备注</div>
+            <div class="cell-right" style="text-align: left;margin-left: 30px;">{{data.Remark}}</div>
+        </div>
+    </div>
+    {{/each}}
+    <div class="m-button">
+        <a href="onling.html" class="btn-block btn-primary" id="onlineBooking">在线预约</a>
+    </div>
+</script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('service_guide_details');
+            }
+        });
+    }
+
+    function getQueryString(name){
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        localStorage.setItem('oid', localStorage.getItem('GOVID'));
+        loadProperties();
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            data: {'id': localStorage.getItem('GOVID')},
+            async: false,
+            jsonp: 'callback',
+            success: function (data) {
+                if (data.IsResult) {
+                    var detail = data.Data;
+                    console.log(detail);
+                    if (detail != null && detail.length > 0) {
+                        $('#J_ListContent').prepend(template('J_ListHtml', {list: detail}));
+                        $('#GovRequire').html($('#GovRequire').text());
+                        $('#GovMaterial').html($('#GovMaterial').text());
+                        $('#GovProcess').html($('#GovProcess').text().replace(/<(?:.|\s)*?>/g,""));
+                        $('#GovQuestion').html($('#GovQuestion').text());
+                        $('#AddTime').html($('#AddTime').text().replace('T', ' '));
+                    }
+                }
+            }
+        });
+    }(window, jQuery);
+</script>
+<script id="test" type="text/html">
+    {{time | dateFormat:'yyyy-MM-dd hh:mm:ss'}}
+</script>
+<script>
+    /**
+      * 对日期进行格式化，
+      * @param date 要格式化的日期
+      * @param format 进行格式化的模式字符串
+      *  支持的模式字母有：
+      *  y:年,
+      *  M:年中的月份(1-12),
+      *  d:月份中的天(1-31),
+      *  h:小时(0-23),
+      *  m:分(0-59),
+      *  s:秒(0-59),
+      *  S:毫秒(0-999),
+      *  q:季度(1-4)
+      * @return String
+      * @author yanis.wang
+      * @see http://yaniswang.com/frontend/2013/02/16/dateformat-performance/
+      */
+    template.helper('dateFormat', function (date, format) {
+        if (typeof date === "string") {
+            var mts = date.match(/(\/Date(\d+)\/)/);
+            if (mts && mts.length >= 3) {
+                date = parseInt(mts[2]);
+            }
+        }
+        date = new Date(date);
+        if (!date || date.toUTCString() == "Invalid Date") {
+            return "";
+        }
+        var map = {
+            "M": date.getMonth() + 1, //月份
+            "d": date.getDate(), //日
+            "h": date.getHours(), //小时
+            "m": date.getMinutes(), //分
+            "s": date.getSeconds(), //秒
+            "q": Math.floor((date.getMonth() + 3) / 3), //季度
+            "S": date.getMilliseconds() //毫秒
+        };
+
+        format = format.replace(/([yMdhmsqS])+/g, function(all, t){
+            var v = map[t];
+            if(v !== undefined){
+                if(all.length > 1){
+                    v = '0' + v;
+                    v = v.substr(v.length-2);
+                }
+                return v;
+            }
+            else if(t === 'y'){
+                return (date.getFullYear() + '').substr(4 - all.length);
+            }
+            return all;
+        });
+        return format;
+    });
+</script>
+</body>
+</html>

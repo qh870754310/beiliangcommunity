@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>微信管理</title>
+    <script src="resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+    <script src="resources/plugins/layer/layer.js"></script>
+    <style>
+        body {
+            text-align: center;
+            margin: 0;
+            padding:100px;
+            font: 12px "Segoe UI", "Lucida Grande", Helvetica, Arial, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", Arial, sans-serif !important;
+        }
+
+        input {
+            outline: none;
+            padding-left: 10px;
+            width: 200px;
+            height: 23px;
+            line-height: 23px;
+            border: 1px solid #e6e6e6;
+            background-color: #fbfbfb;
+        }
+
+        textarea {
+            outline: 0;
+            resize: none;
+            border: 1px solid #e6e6e6;
+            background-color: #fbfbfb;
+            padding: 6px 10px;
+            line-height: 15px;
+            width: 300px;
+            height: 400px;
+        }
+
+        #operation a{
+            outline: none;
+            display: inline-block;
+            padding: 20px;
+            background-color: #2e8ded;
+            text-decoration: none;
+            color: #FFFFFF;
+        }
+
+        #operation a:hover{
+            box-shadow: 0 0 5px #000000;
+        }
+
+        #operation a:active{
+            box-shadow:none;
+        }
+
+        #operation a+a{
+            margin: 20px;
+        }
+
+        /*滚动条样式*/
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px;
+            background-color: #F5F5F5;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #2F4050;
+            border: 1px solid #555555;
+        }
+
+        ::-webkit-scrollbar:horizontal {
+            height: 6px;
+        }
+    </style>
+    <script>
+        var appID;
+        var appsecret;
+        var accessToken;
+        $(function () {
+            layer.open({
+                title: '公众号基本信息',
+                type: 1,
+                content: $('#basicInfo'),
+                btn: ['确认'],
+                closeBtn: 0,
+                anim: 5,
+                resize: false,
+                move: false,
+                yes: function (index, layero) {
+                    appID = $('#appID').val();
+                    appsecret = $('#appsecret').val();
+                    if (!appID) {
+                        layer.msg('请输入公众号appID', {
+                            icon: 0,
+                            offset: '5px'
+                        });
+                        return false;
+                    }
+                    if (!appsecret) {
+                        layer.msg('请输入公众号appsecret', {
+                            icon: 0,
+                            offset: '5px'
+                        });
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/getAccessToken',
+                        type: "POST",
+                        dataType: "json",
+                        data: {'appID': appID, 'appsecret': appsecret},
+                        async: false,
+                        success: function (data) {
+                            accessToken = data.access_token;
+                            if (accessToken) {
+                                layer.close(index);
+                                $('#operation').show();
+                            } else {
+                                layer.msg('填写的参数错误', {
+                                    icon: 0,
+                                    offset: '5px'
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        /**
+         * 清除菜单
+         */
+        function clearMenu() {
+            $.ajax({
+                url: '/deleteMenu',
+                type: "POST",
+                dataType: "json",
+                data: {'accessToken': accessToken},
+                async: false,
+                success: function (data) {
+                    if (data.errcode == 0) {
+                        layer.msg('菜单删除成功', {
+                            icon: 1,
+                            offset: '5px'
+                        });
+                        layer.close(index);
+                    } else {
+                        layer.msg('菜单删除失败', {
+                            icon: 5,
+                            offset: '5px'
+                        });
+                    }
+                }
+            });
+        }
+
+        /**
+         * 设置菜单
+         */
+        function setupMenu() {
+            layer.open({
+                title: '请添加菜单JSON数据',
+                type: 1,
+                content: $('#menuInfo'),
+                btn: ['确认'],
+                anim: 5,
+                resize: false,
+                move: false,
+                yes: function (index, layero) {
+                    $.ajax({
+                        url: '/createMenu',
+                        type: "POST",
+                        dataType: "json",
+                        data: {'accessToken': accessToken, 'menuData': $('#menuData').val()},
+                        async: false,
+                        success: function (data) {
+                            if (data.errcode == 0) {
+                                layer.msg('菜单设置成功', {
+                                    icon: 1,
+                                    offset: '5px'
+                                });
+                                layer.close(index);
+                            } else {
+                                layer.msg('菜单设置失败', {
+                                    icon: 5,
+                                    offset: '5px'
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div id="operation" style="display: none;">
+    <a href="javascript:void(0);" onclick="clearMenu();">清除菜单</a>
+    <a href="javascript:void(0);" onclick="setupMenu();">设置菜单</a>
+</div>
+<div id="basicInfo" style="display: none;padding: 10px;">
+    <table cellpadding="5">
+        <tr>
+            <td style="text-align: right;">appID：</td>
+            <td><input type="text" id="appID"/></td>
+        </tr>
+        <tr>
+            <td style="text-align: right;">appsecret：</td>
+            <td><input type="text" id="appsecret"/></td>
+        </tr>
+    </table>
+</div>
+<div id="menuInfo" style="display: none;padding: 10px;">
+    <textarea id="menuData"></textarea>
+</div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Slider</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+
+
+</head>
+<body>
+<section class="g-flexview">
+
+    <header class="m-navbar">
+        <a href="../index.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">Slider</span></div>
+    </header>
+
+    <section class="g-scrollview">
+
+        <aside class="demo-tip">
+            <p>Slider 支持 Data API 和 Javascript API方式调用；</p>
+        </aside>
+
+        <div class="m-slider" data-ydui-slider="{autoplay: 5000}">
+            <div class="slider-wrapper">
+                <div class="slider-item">
+                    <a href="#">
+                        <img  class="item_img"  src="http://static.ydcss.com/uploads/ydui/1.jpg">
+                    </a>
+                </div>
+                <div class="slider-item">
+                    <a href="#">
+                        <img  class="item_img"  src="http://static.ydcss.com/uploads/ydui/2.jpg">
+                    </a>
+                </div>
+                <div class="slider-item">
+                    <a href="#">
+                        <img  class="item_img"  src="http://static.ydcss.com/uploads/ydui/3.jpg">
+                    </a>
+                </div>
+            </div>
+            <div class="slider-pagination"></div>
+        </div>
+
+    </section>
+</section>
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<script type="text/javascript">
+    $.fn.ImgZoomIn = function () {
+        var window_h = $(window).height();
+        var scroll_h = $(window).scrollTop();
+
+        bgstr = '<div id="ImgZoomInBG" style="position: absolute;filter:Alpha(Opacity=70); opacity:0.7;z-index: 10000;background-color: #000;display: none;"></div>';
+        imgstr = '<img id="ImgZoomInImage" src="' + $(this).attr('src')+'" style="cursor:pointer; display:none; position:absolute; z-index:10001;" />';
+        if ($('#ImgZoomInBG').length < 1) {
+            $('body').append(bgstr);
+        }
+        if ($('#ImgZoomInImage').length < 1) {
+            $('body').append(imgstr);
+        }
+        else {
+            $('#ImgZoomInImage').attr('src', $(this).attr('src'));
+        }
+
+        $('#ImgZoomInBG').css('top', scroll_h+'px');
+        $('#ImgZoomInBG').css('width', '100%');
+        $('#ImgZoomInBG').css('height', window_h+'px');
+
+        $('#ImgZoomInImage').css('width', '100%');
+        $('#ImgZoomInImage').css('height', (window_h/2)+'px');
+        $('#ImgZoomInImage').css('top', (scroll_h+window_h/4)+'px');
+
+        $('#ImgZoomInBG').show();
+        $('#ImgZoomInImage').show();
+    };
+    // PC端
+    $(document).ready(function () {
+        $(document).on('click','.item_img',function (){
+            $(this).ImgZoomIn();
+            $(document.body).css({
+                "overflow-x":"hidden",
+                "overflow-y":"hidden"
+            });
+        });
+
+        $(document).on('click','#ImgZoomInImage',function(){
+            $('#ImgZoomInImage').hide();
+            $('#ImgZoomInBG').hide();
+            $(document.body).css({
+                "overflow-x":"auto",
+                "overflow-y":"auto"
+            });
+        });
+    });
+    // 手机端
+    $(document).ready(function () {
+        $(document).on('touchend','.item_img',function (t){
+            $(this).ImgZoomIn();
+            document.ontouchstart=function(){
+                return false;
+            };
+            t.preventDefault();
+        });
+
+        $(document).on('touchend','#ImgZoomInImage',function(t){
+            $('#ImgZoomInImage').hide();
+            $('#ImgZoomInBG').hide();
+            document.ontouchstart=function(){
+                return true;
+            };
+            t.preventDefault();
+        });
+    });
+</script>
+
+</body>
+</html>

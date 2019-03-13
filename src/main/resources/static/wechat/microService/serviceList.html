@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>微服务</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="../microCommunity/menu.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">微服务</span></div>
+    </header>
+    <div class="g-scrollview">
+        <div id="J_ListContent" class="m-list">
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入Template脚本 -->
+<script src="../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <div class="m-cell">
+        <a href="javascript:void(0);" class="cell-item" id="{{data.CODE}}" onclick="return initItem()">
+            <div class="cell-left">{{data.NAME}}</div>
+            <div class="cell-right cell-arrow">
+                <!--<span>{{data.CODE}}</span>-->
+            </div>
+        </a>
+    </div>
+    {{/each}}
+</script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('service_guides_type');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function () {
+        loadProperties();
+        // 根据需求自定义获取数据方法
+        var page = 1;
+        var loadMore = function (callback) {
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function (ret) {
+                    if (ret.IsResult) {
+                        // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                        $('#J_ListContent').prepend(template('J_ListHtml', {list: ret.Data}));
+                        var tipStr = ret.Data.length > 0 ? '为您更新了' + ret.Data.length + '条内容' : '已是最新内容';
+                        ++page;
+                        YDUI.dialog.toast(tipStr, 'none', 1500);
+                    }
+                },
+                complete: function () {
+                    typeof callback == 'function' && callback();
+                }
+            });
+        };
+        //使用jQuery的deferred对象实现异步通信。
+        $('#J_ListContent').pullRefresh({
+            loadListFn: function () {
+                var def = $.Deferred();
+                loadMore(function () {
+                    def.resolve();
+                });
+                return def.promise();
+            }
+        });
+    }();
+</script>
+<script>
+    function initItem() {
+        if($("a[class='cell-item']").length > 0) {
+            $("a[class='cell-item']").on('click', function () {
+                if ($(this).parent().parent().attr('id') == 'J_ListContent') {
+                    localStorage.setItem('type', $(this).attr("id"));
+                    window.location.href = 'partyService/party_service.html';
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

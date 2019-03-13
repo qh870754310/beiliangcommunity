@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="../../microCommunity/menu.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">用户中心</span></div>
+    </header>
+    <div class="g-scrollview">
+        <div class="m-cell demo-small-pitch">
+            <div class="cell-item">
+                <div class="cell-left" id="circle" style="margin:10px auto;">
+                    <img src="http://my.2345.com/member/avatar/20286/60855098_big.jpg" style="border-radius:50%;width: 100px;height: 100px"/>
+                </div>
+                <div class="cell-right">
+                    <span style="width:100px; height:20px; line-height:20px; text-align:center; float:left;" class="" id="UserName"></span>
+                </div>
+            </div>
+        </div>
+        <div class="m-cell demo-small-pitch">
+            <div class="m-cell">
+                <a href="baseInfo.html" class="cell-item">
+                    <div class="cell-left">个人信息</div>
+                    <div class="cell-right cell-arrow"></div>
+                </a>
+                <a href="modifyPassword.html" class="cell-item">
+                    <div class="cell-left">修改密码</div>
+                    <div class="cell-right cell-arrow"></div>
+                </a>
+                <a href="contactUs.html" class="cell-item">
+                    <div class="cell-left">联系我们</div>
+                    <div class="cell-right cell-arrow"></div>
+                </a>
+            </div>
+        </div>
+        <div class="m-cell demo-small-pitch" style="margin-top: 150px;">
+            <div class="m-cell">
+                <button type="button" id="loginOut" class="btn-block btn-danger" onclick="loginOut()">退出登录</button>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var dialog;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        loadProperties();
+        dialog = win.YDUI.dialog;
+        var userInfo = JSON.parse(localStorage.getItem("loginInfo"));
+        $('#UserName').html(userInfo.UserName);
+    }(window, jQuery);
+
+    function loginOut() {
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+</script>
+</body>
+</html>

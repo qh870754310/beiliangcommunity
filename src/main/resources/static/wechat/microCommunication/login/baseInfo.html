@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基本信息</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="personal.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">个人信息</span></div>
+    </header>
+    <div class="g-scrollview">
+        <div class="m-cell demo-small-pitch" id="J_ListContent"></div>
+
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入template脚本 -->
+<script src="../../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <div id="J_Tab" class="m-tab">
+        <ul class="tab-nav">
+            <li class="tab-nav-item tab-active"><a href="javascript:;">基本信息</a></li>
+            <li class="tab-nav-item"><a href="javascript:;">特殊信息</a></li>
+        </ul>
+        <div class="tab-panel">
+            <div class="tab-panel-item tab-active">
+                <div class="cell-item">
+                    <div class="cell-left">姓名</div>
+                    <div class="cell-right">
+                        <span class="" id="UserName">{{data.Name}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">性别</div>
+                    <div class="cell-right">
+                        <span class="" id="Sex">{{data.Sex}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">身份证号</div>
+                    <div class="cell-right">
+                        <span class="" id="Idcard">{{data.Idcard}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">生日</div>
+                    <div class="cell-right">
+                        <span class="" id="Birth">{{data.Birth}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">联系电话</div>
+                    <div class="cell-right">
+                        <span class="" id="Phone">{{data.Phone}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">地址</div>
+                    <div class="cell-right">
+                        <span class="" id="Address">{{data.Address}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">居住类型</div>
+                    <div class="cell-right">
+                        <span class="" id="Livetype">{{data.Livetype}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">文化程度</div>
+                    <div class="cell-right">
+                        <span class="" id="EduTypeText">{{data.EduTypeText}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">户主关系</div>
+                    <div class="cell-right">
+                        <span class="" id="RelationText">{{data.RelationText}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">婚姻状况</div>
+                    <div class="cell-right">
+                        <span class="" id="MarryTypeText">{{data.MarryTypeText}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">户口性质</div>
+                    <div class="cell-right">
+                        <span class="" id="HouseholdTypeText">{{data.HouseholdTypeText}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">收入情况</div>
+                    <div class="cell-right">
+                        <span class="" id="IncomeTypeText">{{data.IncomeTypeText}}</span>
+                    </div>
+                </div>
+                <div class="cell-item">
+                    <div class="cell-left">家庭情况</div>
+                    <div class="cell-right">
+                        <span class="" id="Remark">{{data.Remark}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-panel-item">
+                <div class="m-list">
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="DY" onclick="return initItem('DY')">
+                            <div class="cell-left">党员</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="ZYZ" onclick="return initItem('ZYZ')">
+                            <div class="cell-left">志愿者</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="ZDRQ" onclick="return initItem('ZDRQ')">
+                            <div class="cell-left">重点人群</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="LDRK" onclick="return initItem('LDRK')">
+                            <div class="cell-left">流动人口</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="CJR" onclick="return initItem('CJR')">
+                            <div class="cell-left">残疾人</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="DBH" onclick="return initItem('DBH')">
+                            <div class="cell-left">低保户</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="JSDX" onclick="return initItem('JSDX')">
+                            <div class="cell-left">计生对象</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="LNR" onclick="return initItem('LNR')">
+                            <div class="cell-left">老年人</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="TXRY" onclick="return initItem('TXRY')">
+                            <div class="cell-left">退休人员</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="GE" onclick="return initItem('GE')">
+                            <div class="cell-left">孤儿</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="MZ" onclick="return initItem('MZ')">
+                            <div class="cell-left">民族</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="ZJXY" onclick="return initItem('ZJXY')">
+                            <div class="cell-left">宗教信仰</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="JYQK" onclick="return initItem('JYQK')">
+                            <div class="cell-left">就业情况</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="YLBX" onclick="return initItem('YLBX')">
+                            <div class="cell-left">养老保险</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="YBQK" onclick="return initItem('YBQK')">
+                            <div class="cell-left">医保情况</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="JKZK" onclick="return initItem('JKZK')">
+                            <div class="cell-left">健康状况</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="QWQB" onclick="return initItem('QWQB')">
+                            <div class="cell-left">侨务侨胞</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                    <div class="m-cell">
+                        <a href="javascript:void(0);" class="cell-item" id="FYQK" onclick="return initItem('FYQK')">
+                            <div class="cell-left">服役情况</div>
+                            <div class="cell-right cell-arrow"></div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+    <div class="m-cell demo-small-pitch">
+        <div class="m-celltitle">信息上报</div>
+        <div class="cell-item">
+            <div class="cell-right">
+                <textarea class="cell-textarea" id="DetailInfo" placeholder="请输入有误信息"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="m-button">
+        <a href="javascript:void(0);" class="btn-block btn-primary" onclick="return InfoFeedback();">上报</a>
+    </div>
+</script>
+<script>
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    var baseUrl;
+    var dialog;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('info_feedback');
+                baseUrl = apiDomain + jQuery.i18n.prop('getUserDetailed');
+            }
+        });
+    }
+    var specialInfo;
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+
+    !function (win, $) {
+        loadProperties();
+        dialog = win.YDUI.dialog;
+        var item = JSON.parse(localStorage.getItem("loginInfo"));
+        $('#UserName').text(item.NickName == null ? "" : item.NickName);
+        $('#CardNo').text(item.CardNo == null ? "" : item.CardNo);
+        $('#AreaCode').text(item.AreaCode);
+        if(item.Gender == '0') {
+            $('#Gender').text('男');
+        } else {
+            $('#Gender').text('女');
+        }
+        $("#HomeTel").text(item.HomeTel == null ? "" : item.HomeTel);
+        $.ajax({
+            url: baseUrl,
+            type: "GET",
+            dataType: "json",
+            data: {userCode: item.Code},
+            async: false,
+            jsonp: 'callback',
+            success: function (data) {
+                if (data.IsResult != undefined && data.IsResult == false) {
+                    dialog.notify('很抱歉，' + data.Msg, 3000, function(){});
+                } else {
+                    $('#J_ListContent').prepend(template('J_ListHtml', {list: data}));
+                    specialInfo = data;
+                }
+            }
+        });
+    }(window, jQuery);
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    /**
+     * 个人信息错误反馈
+     *
+     * @constructor
+     */
+    function InfoFeedback() {
+        var loginInfo = JSON.parse(localStorage.getItem('loginInfo'));
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            data: {AddUser: loginInfo.Code, DetailInfo: $('#DetailInfo').val()},
+            async: false,
+            jsonp: 'callback',
+            success: function (data) {
+                if (data.IsResult) {
+                    dialog.notify('恭喜您，' + data.Msg, 3000, function(){
+                        //跳转到基本信息页面
+                        window.location = '/wechat/microCommunication/login/personal.html';
+                    });
+                } else {
+                    dialog.notify('很抱歉，提交失败！', 3000, function(){});
+                }
+            }
+        });
+    }
+
+
+    function initItem(type) {
+        localStorage.setItem('type', type);
+        if (specialInfo != undefined) {
+            localStorage.setItem('specialInfo', JSON.stringify(specialInfo));
+        }
+        window.location.href = 'specialInfo.html';
+    }
+</script>
+<script>
+    var $tab = $('#J_Tab');
+
+    $tab.tab({
+        nav: '.tab-nav-item',
+        panel: '.tab-panel-item',
+        activeClass: 'tab-active'
+    });
+
+    $tab.find('.tab-nav-item').on('open.ydui.tab', function (e) {
+        console.log('索引：%s - [%s]正在打开', e.index, $(this).text());
+    });
+
+    $tab.find('.tab-nav-item').on('opened.ydui.tab', function (e) {
+        console.log('索引：%s - [%s]已经打开了', e.index, $(this).text());
+    });
+</script>
+</body>
+</html>

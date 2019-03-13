@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>处理过程</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <link rel="stylesheet" href="../../../resources/plugins/baguetteBox/dist/baguetteBox.css" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+    <link rel="stylesheet" href="https://res.wx.qq.com/open/libs/weui/0.3.0/weui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/weui-master/dist/style/weui.min.css" />
+    <link rel="stylesheet" href="../../../resources/css/imgUp.css" />
+    <!-- 引入jQuery 2.0+ -->
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!--<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>-->
+    <script src="../../../resources/js/jweixin-1.2.0.js"></script>
+    <script src="../../../resources/js/imgUp.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="../../microCommunity/menu.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">处理过程</span></div>
+    </header>
+    <div class="g-scrollview">
+        <div class="m-cell demo-small-pitch">
+            <div class="cell-item">
+                <div class="cell-left">姓名：</div>
+                <div class="cell-right"><input type="text" class="cell-input" placeholder="请输入您的姓名" autocomplete="off" /></div>
+            </div>
+            <div class="cell-item">
+                <div class="cell-right cell-arrow"><input type="text" class="cell-input" placeholder="请输入您的姓名" autocomplete="off" /></div>
+            </div>
+            <div class="cell-item">
+                <div class="cell-left">配送方式</div>
+                <div class="cell-right">顺丰快递</div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入Template脚本 -->
+<script src="../../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<script src="../../../resources/plugins/weui.js-master/dist/weui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <a href="javascript:;" class="list-item">
+        <div class="list-mes">
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">{{data.userName}}</span>
+                </div>
+                <div>{{data.reportTime}}</div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">{{data.address}}</span>
+                </div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">{{data.description}}</span>
+                </div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">
+                        {{if data.state == 0}}
+                            未处理
+                        {{else if data.state == 1}}
+                            已处理
+                        {{else if data.state == 2}}
+                            已指派
+                        {{else if data.state == 3}}
+                            已结案
+                        {{else if data.state == 4}}
+                            处理中
+                        {{else if data.state == 5}}
+                            已退回
+                        {{/if}}
+                    </span>
+                </div>
+                <div>{{data.responseTime}}</div>
+            </div>
+            <div class="list-mes-item">
+                <div>
+                    <span class="list-price" style="color: #0d0d0d">回复信息：</span>
+                </div>
+                <div>{{data.responseMsg}}</div>
+            </div>
+        </div>
+    </a>
+    {{/each}}
+</script>
+<!--[if lt IE 9]>
+<script>
+    var oldIE = true;
+</script>
+<![endif]-->
+<script>
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('getAllProcess');
+            }
+        });
+    }
+
+    !function () {
+        FastClick.attach(document.body);
+        loadProperties();
+        var id = localStorage.getItem('padId');
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            data: {id: id},
+            async: false,
+            jsonp: 'callback',
+            success: function (ret) {
+                console.log(ret);
+                // 该示例使用了arttemplate模板引擎，当然你也可以用其他方式
+                var html = template('J_ListHtml', {list: ret.Data});
+                $('#J_ListContent').append(html).find('img').lazyLoad({binder: '#J_ListContent'});
+            }
+        });
+    }();
+</script>
+</body>
+</html>

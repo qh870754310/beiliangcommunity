@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>联系我们</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+    <style>
+        p {
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="personal.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">联系我们</span></div>
+    </header>
+    <div class="g-scrollview">
+        <div class="list-item" style="font-size: 16px">
+            <div class="contact" style="margin-top: 20px; margin-left: 30px">
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script type="text/javascript">
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://192.168.1.135:8080/';
+    var url;
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('contact_us');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        loadProperties();
+        if (url != undefined && url != null) {
+            $.ajax({
+                url:'http://192.168.1.135:8080/api/Home/GetContactUs',
+                type: "GET",
+                dataType: "json",
+                jsonp: 'callback',
+                async: false,
+                success: function (data) {
+                    if (data.IsResult) {
+                        if (data.Data.length > 0) {
+                            for (var i = 0; i< data.Data.length; i++) {
+                                var content = data.Data[i].IntrContent;
+                                $('.contact').html(content);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }(window, jQuery);
+</script>
+</body>
+</html>

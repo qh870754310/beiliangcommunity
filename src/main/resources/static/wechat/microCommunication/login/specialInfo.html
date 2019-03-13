@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基本信息</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+    <style>
+       /* #divTags ul li {
+            float: left;
+            padding: 20px;
+            margin: 5px 3px;
+            border: solid 1px #ccc;
+        }
+        #divTags ul li.selected {
+            background: #004FCC;
+        }
+        .table-bordered {
+            border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            margin-top: 10px;
+        }
+        .table-bordered {
+            margin-top: 10px;
+            border-radius: 4px;
+            border: solid 1px #ddd
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        table {
+            background-color: transparent;
+            max-width: 100%;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            line-height: 18px;
+            padding: 5px;
+            text-align: left;
+        }
+        tbody {
+            display: table-row-group;
+            vertical-align: middle;
+            border-color: inherit;
+        }
+        tr {
+            display: table-row;
+            vertical-align: inherit;
+            border-color: inherit;
+            border: 1px solid #ddd;
+        }
+        tbody:first-child tr:first-child td:first-child, .table-bordered tbody:first-child tr:first-child th:first-child {
+            border-top-left-radius: 4px;
+        }
+        .table-bordered caption + thead tr:first-child th, .table-bordered caption + tbody tr:first-child th, .table-bordered caption + tbody tr:first-child td, .table-bordered colgroup + thead tr:first-child th, .table-bordered colgroup + tbody tr:first-child th, .table-bordered colgroup + tbody tr:first-child td, .table-bordered thead:first-child tr:first-child th, .table-bordered tbody:first-child tr:first-child th, .table-bordered tbody:first-child tr:first-child td {
+            border-top: 0 none;
+        }
+        .table td {
+            vertical-align: inherit;
+        }*/
+
+        .m-celltitle {
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body style="font-family: ''">
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="baseInfo.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">个人信息</span></div>
+    </header>
+    <section class="g-scrollview" id="J_ListContent">
+    </section>
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入template脚本 -->
+<script src="../../../resources/js/template.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    {{if type == 'DY'}}
+    <div class="m-celltitle">党员</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">是否是党员：</div>
+            <div class="cell-right" id="IsDangyuan">
+                {{if data.IsDangyuan == 1}}
+                    是
+                {{else if data.IsDangyuan == 0}}
+                    否
+                {{/if}}
+            </div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">党员类型：</div>
+            <div class="cell-right" id="PartyTypeText">{{data.PartyTypeText}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">入党日期：</div>
+            <div class="cell-right" id="Partydate">{{data.Partydate}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">党内职务：</div>
+            <div class="cell-right" id="Partypost">{{data.Partypost}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">党支部：</div>
+            <div class="cell-right" id="Partybranch">{{data.Partybranch}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">介绍人：</div>
+            <div class="cell-right" id="Partyintroducer">{{data.Partyintroducer}}</div>
+        </div>
+    </div>
+    {{else if type == 'ZYZ'}}
+    <div class="m-celltitle">志愿者</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">志愿日期：</div>
+            <div class="cell-right" id="Volunteerdate">{{data.Volunteerdate}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">有无服务：</div>
+            <div class="cell-right" id="Volunteerservice">{{data.Volunteerservice}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">志愿者类型：</div>
+            <div class="cell-right" id="VolunteerTypeText">{{data.VolunteerTypeText}}</div>
+        </div>
+    </div>
+    {{else if type == 'ZDRQ'}}
+    <div class="m-celltitle" style="padding-top: 15px">重点人群</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">所犯罪行：</div>
+            <div class="cell-right" id="reason">{{data.reason}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">监控帮教民警：</div>
+            <div class="cell-right" id="HelpPolice">{{data.HelpPolice}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">监控帮教社区：</div>
+            <div class="cell-right" id="HelpCommunity">{{data.HelpCommunity}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">监控帮教楼长：</div>
+            <div class="cell-right" id="HelpHouse">{{data.HelpHouse}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">重点人群类型：</div>
+            <div class="cell-right" id="KeyPersonTypeText">{{data.KeyPersonTypeText}}</div>
+        </div>
+    </div>
+    {{else if type  == 'LDRK'}}
+    <div class="m-celltitle">流动人口</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">是否是流动人口：</div>
+            <div class="cell-right" id="IsFlowPerson">{{data.IsFlowPerson}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">流动情况：</div>
+            <div class="cell-right" id="FlowPersonRemark">{{data.FlowPersonRemark}}</div>
+        </div>
+    </div>
+    {{else if type == 'CJR'}}
+    <div class="m-celltitle">残疾人</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">残疾证：</div>
+            <div class="cell-right" id="Disabledcertificate">{{data.Disabledcertificate}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">残疾等级：</div>
+            <div class="cell-right" id="Disabledgrade">{{data.Disabledgrade}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">残疾类型：</div>
+            <div class="cell-right" id="DisabledtypeText">{{data.DisabledtypeText}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">供养情况：</div>
+            <div class="cell-right" id="Disabledsupport">{{data.Disabledsupport}}</div>
+        </div>
+    </div>
+    {{else if type == 'DBH'}}
+    <div class="m-celltitle">低保户</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">开始日期：</div>
+            <div class="cell-right" id="Lowperdate">{{data.Lowperdate}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">低保证：</div>
+            <div class="cell-right" id="Lowpercertificate">{{data.Lowpercertificate}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">低保类型：</div>
+            <div class="cell-right" id="LowpertypeText">{{data.LowpertypeText}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">补助金额：</div>
+            <div class="cell-right" id="Lowpermoney">{{data.Lowpermoney}}</div>
+        </div>
+    </div>
+    {{else if type == 'JSDX'}}
+    <div class="m-celltitle">计生对象</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">子女数：</div>
+            <div class="cell-right" id="Jscount">{{data.Jscount}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">控制节育：</div>
+            <div class="cell-right" id="Jscontrol">{{data.Jscontrol}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">计生类型：</div>
+            <div class="cell-right" id="IppfTypeText">{{data.IppfTypeText}}</div>
+        </div>
+    </div>
+    {{else if type == 'LNR'}}
+    <div class="m-celltitle">老年人</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">老年卡号：</div>
+            <div class="cell-right" id="Agednumber">{{data.Agednumber}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">老年人类型：</div>
+            <div class="cell-right" id="OldTypeText">{{data.OldTypeText}}</div>
+        </div>
+    </div>
+    {{else if type == 'TXRY'}}
+    <div class="m-celltitle">退休人员</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">退休类型：</div>
+            <div class="cell-right" id="RetireText">{{data.RetireText}}</div>
+        </div>
+    </div>
+    {{else if type == 'GE'}}
+    <div class="m-celltitle">孤儿</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">是否是孤儿：</div>
+            <div class="cell-right" id="IsGuer">
+                {{if data.RetireText == 1}}
+                    是
+                {{else if data.RetireText == 0}}
+                否
+                {{/if}}
+             </div>
+        </div>
+    </div>
+    {{else if type == 'MZ'}}
+    <div class="m-celltitle">民族</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">所属民族：</div>
+            <div class="cell-right" id="Nation">{{data.Nation}}</div>
+        </div>
+    </div>
+    {{else if type == 'ZJXY'}}
+    <div class="m-celltitle">宗教信仰</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">信仰宗教：</div>
+            <div class="cell-right" id="ReligionText">{{data.ReligionText}}</div>
+        </div>
+    </div>
+    {{else if type == 'JYQK'}}
+    <div class="m-celltitle">就业情况</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">就业情况：</div>
+            <div class="cell-right" id="JYQK">{{data.JYQK}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">单位名称：</div>
+            <div class="cell-right" id="EmployCompany">{{data.EmployCompany}}</div>
+        </div>
+    </div>
+    {{else if type == 'YLBX'}}
+    <div class="m-celltitle">养老保险</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">养老保险：</div>
+            <div class="cell-right" id="ShebaoText">{{data.ShebaoText}}</div>
+        </div>
+    </div>
+    {{else if type == 'YBQK'}}
+    <div class="m-celltitle">医保情况</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">医保情况：</div>
+            <div class="cell-right" id="YibaoText">{{data.YibaoText}}</div>
+        </div>
+    </div>
+    {{else if type == 'JKZK'}}
+    <div class="m-celltitle">健康情况</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">健康情况：</div>
+            <div class="cell-right" id="HealthText">{{data.HealthText}}</div>
+        </div>
+    </div>
+    {{else if type == 'QWQB'}}
+    <div class="m-celltitle">侨务侨胞</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">外籍籍贯：</div>
+            <div class="cell-right" id="Overseasplace">{{data.Overseasplace}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">外语：</div>
+            <div class="cell-right" id="Overseaslanguages">{{data.Overseaslanguages}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">证件类型：</div>
+            <div class="cell-right" id="CardType">{{data.CardType}}</div>
+        </div>
+        <div class="cell-item">
+            <div class="cell-left">证件号：</div>
+            <div class="cell-right" id="Overseasnumber">{{data.Overseasnumber}}</div>
+        </div>
+    </div>
+    {{else if type == 'FYQK'}}
+    <div class="m-celltitle">服役情况</div>
+    <div class="m-cell demo-small-pitch">
+        <div class="cell-item">
+            <div class="cell-left">服役情况：</div>
+            <div class="cell-right" id="EndowmentTypeText">{{data.EndowmentTypeText}}</div>
+        </div>
+    </div>
+    {{/if}}
+    {{/each}}
+</script>
+<script type="text/javascript">
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        var dialog = win.YDUI.dialog;
+        var specialInfo = JSON.parse(localStorage.getItem('specialInfo'));
+        var type = localStorage.getItem('type');
+        console.log(specialInfo);
+        $('#J_ListContent').prepend(template('J_ListHtml', {type: type, list:specialInfo}));
+    }(window, jQuery);
+
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+</script>
+</body>
+</html>

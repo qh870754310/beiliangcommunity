@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>志愿者</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/build/css/ydui.css" />
+    <link rel="stylesheet" href="../../../resources/plugins/ydui-0.1.3/demo/css/demo.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.flexible.js"></script>
+</head>
+<body>
+<section class="g-flexview">
+    <header class="m-navbar">
+        <a href="volunteer.html" class="navbar-item"><i class="back-ico"></i></a>
+        <div class="navbar-center"><span class="navbar-title">志愿者服务</span></div>
+    </header>
+    <div class="g-scrollview">
+        <!--<div class="m-list list-theme4">
+            <div class="list-item">
+                <div class="list-mes">
+                    <h2 style="text-align: center; font-size: 16px">标题</h2>
+                    <div class="list-mes-item">
+                        <div style="width: 100%; margin: 0 auto; text-align: center;padding: 5px">
+                            2017-09-22
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="list-item" style="font-size: 16px">
+                平凡的程序员虽然有很多人鄙视平凡，但也有人享受其中。
+                做一名平凡的程序员，每天按时上班，按时下班，做着自己喜欢的工作，用自己码下的代码改变世界，是无数热爱编程的程序员的梦想。
+                一旦你决定要离职，（除非事发仓促，比如家庭变故之类的）一定要做充分的准备。那么，在跳槽前我们都要做哪些准备工作呢？
+            </div>
+        </div>-->
+        <div class="m-list list-theme4" id="J_ListContent"></div>
+    </div>
+</section>
+
+<!-- 引入jQuery 2.0+ -->
+<script src="../../../resources/plugins/jquery/jquery-3.1.1.min.js"></script>
+<script src="../../../resources/js/template.js"></script>
+<script src="../../../resources/js/jquery.i18n.properties-min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../../../resources/plugins/ydui-0.1.3/build/js/ydui.js"></script>
+<!-- 解决移动端浏览器300ms延迟 -->
+<script src="../../../resources/js/fastclick.js" type='application/javascript'></script>
+<script id="J_ListHtml" type="text/html">
+    {{each list as data}}
+    <div style="width: 100%;float: left;position: relative;min-height: 1px;margin-right: 16px;">
+        <div class="sidebar-box white" style="opacity: 1;margin-top: 10px;">
+            <h2 style="text-align:center; border:none;font-size: 20px;font-weight: 400;margin: 30px 0 20px;" id="title">{{data.Title}}</h2>
+            <p style="text-align:center; font-size:12px; ">
+                <span style="margin-left: 10px;" class="aboutitem" id="ActivitiesTypeName">活动类型：{{data.AType}}</span>
+                <span style="margin-left: 10px;" class="aboutitem" id="ct">已报名人数：{{data.ct}}</span>
+            </p>
+            <p style="text-align:center; font-size:12px; margin: 10px ">
+                <span style="margin-left: 10px;" class="aboutitem" id="stTime">开始时间：{{data.stTime}}</span>
+                <span style="margin-left: 10px;" class="aboutitem" id="edTime">结束时间：{{data.edTime}}</span>
+            </p>
+        </div>
+        <div style="border:none; text-indent:30px;line-height:30px;border-top:1px #eee solid;">
+            <p>
+                <span style="font-family:Arial;font-size:16px;" id="content">{{data.Content}}</span>
+            </p>
+             {{if data.CoverBImg != null}}
+            <p>
+                <span style="font-family:Arial;font-size:16px;">
+                    <img src="{{data.CoverBImg}}">
+                </span>
+            </p>
+             {{/if}}
+        </div>
+        <p style="border-bottom: 1px solid #ccc; margin: 0px;margin-top: 15px; margin-bottom: 15px;" id="Introduction"></p>
+        <div class="m-button">
+            <a href="onlineRegistration.html" class="btn-block btn-primary" id="signUp">线上报名</a>
+        </div>
+    </div>
+    {{/each}}
+</script>
+<script type="text/javascript">
+    /*var apiDomain = localStorage.getItem('apiDomain');*/
+    var apiDomain = 'http://58.211.255.58:7937/';
+    var url;
+    var code = localStorage.getItem('volunteerCode');
+    var userInfo = JSON.parse(localStorage.getItem("loginInfo"));
+    function loadProperties(){
+        jQuery.i18n.properties({// 加载浏览器语言对应的资源文件
+            name:'urls', // 资源文件名称
+            path:'../../../resources/i18n/', // 资源文件路径
+            mode:'map', // 用 Map 的方式使用资源文件中的值
+            callback: function() {// 加载成功后设置显示内容
+                /*apiDomain = jQuery.i18n.prop('base_url');*/
+                url = apiDomain + jQuery.i18n.prop('activities_details');
+            }
+        });
+    }
+
+    $(function() {
+        FastClick.attach(document.body);
+    });
+
+    !function (win, $) {
+        loadProperties();
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            data: {'Code': code},
+            async: false,
+            jsonp: 'callback',
+            success: function (data) {
+                console.log(data.Data);
+                if (data.IsResult) {
+                    var detail = data.Data;
+                    if (detail != null && detail.length > 0) {
+                        $('#J_ListContent').prepend(template('J_ListHtml', {list: detail}));
+                        $('#content').html($('#content').text());
+                    }
+                }
+            }
+        });
+    }(window, jQuery);
+</script>
+</body>
+</html>
